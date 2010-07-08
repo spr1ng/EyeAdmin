@@ -1,5 +1,6 @@
-package eye.admin;
+package eye.admin.table;
 
+import eye.admin.MainFrame;
 import java.awt.Component;
 import javax.swing.JButton;
 import javax.swing.JTable;

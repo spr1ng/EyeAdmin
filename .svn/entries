@@ -1,15 +1,15 @@
 10
 
 dir
-38
+71
 svn://localhost/spr1ngsvn/TheEye/EyeAdmin
 svn://localhost/spr1ngsvn/TheEye
 
 
 
-2010-07-02T05:44:52.158022Z
-38
-stream
+2010-07-08T03:50:40.668573Z
+71
+spr1ng
 has-props
 
 
@@ -31,37 +31,15 @@ dir
 
 conf.properties
 file
+55
 
 
 
 
-2010-07-02T05:51:09.766567Z
-5e47fa44d3dbebd8d21719d2c2a1b423
-2010-07-02T05:44:52.158022Z
-38
+4901d20ee9203f8a35807bd25b3d693b
+2010-07-07T01:25:47.974370Z
+45
 stream
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-84
 
 lib
 dir
@@ -74,7 +52,7 @@ dir
 
 manifest.mf
 file
-
+55
 
 
 
@@ -106,9 +84,43 @@ stream
 
 82
 
-build.xml
+README
 file
 
+
+
+
+2010-07-02T06:30:42.054565Z
+d41d8cd98f00b204e9800998ecf8427e
+2010-07-08T03:50:40.668573Z
+71
+spr1ng
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+0
+
+build.xml
+file
+55
 
 
 

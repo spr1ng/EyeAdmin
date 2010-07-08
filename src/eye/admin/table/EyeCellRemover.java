@@ -2,8 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package eye.admin;
+package eye.admin.table;
 
+import eye.admin.MainFrame;
 import java.awt.Component;
 import java.util.Date;
 import javax.swing.AbstractCellEditor;

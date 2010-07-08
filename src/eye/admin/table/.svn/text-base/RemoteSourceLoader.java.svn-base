@@ -2,13 +2,15 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package eye.admin;
+package eye.admin.table;
 
 import com.db4o.ObjectSet;
 import com.db4o.query.Query;
-import eye.models.Image;
-import eye.models.Place;
-import eye.models.RemoteSource;
+import eye.admin.DbManager;
+import eye.admin.MainFrame;
+import eye.core.model.Image;
+import eye.core.model.Place;
+import eye.core.model.RemoteSource;
 import java.util.Vector;
 import javax.swing.JLabel;
 import javax.swing.SwingWorker;
@@ -16,6 +18,7 @@ import javax.swing.SwingWorker;
 /**
  *
  * @author stream
+ * @version $Id$
  */
 public class RemoteSourceLoader extends SwingWorker<Vector<Vector>, Vector> {
 
@@ -41,7 +44,7 @@ public class RemoteSourceLoader extends SwingWorker<Vector<Vector>, Vector> {
         Query q = dbm.getContainer().query();
         q.constrain(getActiveRemoteSource().getClass());
         objectSet = q.execute();
-        total.setText("Total " + MainFrame.getRemoteSourceClass() + ": " + objectSet.size());
+        total.setText("Total: " + objectSet.size());
         Vector dataVector = new Vector();
         for (int x = 0; x < objectSet.size(); x++) {
             Vector row = new Vector();
@@ -60,11 +63,11 @@ public class RemoteSourceLoader extends SwingWorker<Vector<Vector>, Vector> {
         Vector<Vector> remoteSourceData = null;
         try {
             remoteSourceData = get();
+            for (Vector row : remoteSourceData) {
+                model.addRow(row);
+            }
         } catch (Exception ignore) {
-            ignore.printStackTrace();
-        }
-        for (Vector row : remoteSourceData){
-            model.addRow(row);
+            System.out.println(ignore);
         }
     }
 

@@ -4,8 +4,10 @@
  */
 package eye.admin;
 
-import eye.models.Image;
-import eye.models.Place;
+import eye.admin.table.RemoteSourceLoader;
+import eye.admin.table.EyeTableModel;
+import eye.admin.table.EyeCellRenderer;
+import eye.admin.table.EyeCellRemover;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -41,15 +43,17 @@ public class MainFrame extends JFrame {
     private static JComboBox objectSelectorBox;
     private ActButtonListener actListener = new ActButtonListener();
     private static PreferenceDialog prefDialog;
+    private static AboutBox aboutBox;
     private JProgressBar progressBar = new JProgressBar();
     private ProgressListener progressListener = new ProgressListener(progressBar);
     private JLabel total;
-
+    private JButton refreshButton;
     private static String remoteSourceActClass;
 
     public MainFrame() {
         super("EyeAdmin");
         prefDialog = new PreferenceDialog(this, true);
+        aboutBox = new AboutBox(this, true);
         init();
         setSize(741, 459);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -88,8 +92,18 @@ public class MainFrame extends JFrame {
             }
         });
         settingsMenu.add(prefsMenuItem);
+        JMenu helpMenu = new JMenu("About");
+        JMenuItem aboutItem = new JMenuItem("About EyeAdmin");
+        aboutItem.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                aboutBox.setVisible(true);
+            }
+        });
+        helpMenu.add(aboutItem);
         bar.add(fileMenu);
         bar.add(settingsMenu);
+        bar.add(helpMenu);
         return bar;
     }
 
@@ -102,20 +116,24 @@ public class MainFrame extends JFrame {
         addButton.addActionListener(actListener);
         //commitButton.addActionListener(actListener);
         total = new JLabel();
+        Dimension dim =  new Dimension(120,30);
+        total.setMaximumSize(dim);
+        total.setMinimumSize(dim);
+        total.setPreferredSize(dim);
         toolBar.add(addButton);
-        toolBar.add(total);
         objectSelectorBox = new JComboBox(new Object[]{"Images", "Places"});
         objectSelectorBox.addActionListener(new ObjectSelectorListener());
         objectSelectorBox.setPreferredSize(new Dimension(300, 30));
         toolBar.add(new JSeparator());
         toolBar.add(objectSelectorBox);
+        toolBar.add(total);
         toolBar.add(horizontalSpinner());
         return toolBar;
     }
 
     private JPanel horizontalSpinner() {
         JPanel p = new JPanel();
-        JButton refreshButton = new JButton("↺");
+        refreshButton = new JButton("↺");
         refreshButton.setActionCommand("refresh");
         refreshButton.addActionListener(actListener);
         JButton pre = new JButton("<<");
@@ -148,7 +166,9 @@ public class MainFrame extends JFrame {
     }
 
     private void refreshData() {
-        String item = (String)objectSelectorBox.getSelectedItem();
+        refreshButton.setEnabled(false);
+        objectSelectorBox.setEnabled(false);
+        String item = (String) objectSelectorBox.getSelectedItem();
         remoteSourceActClass = item;
         progressBar.setValue(0);
         model.clear();
@@ -156,7 +176,7 @@ public class MainFrame extends JFrame {
             RemoteSourceLoader sourceLoader = new RemoteSourceLoader(model, total);
             sourceLoader.addPropertyChangeListener(progressListener);
             sourceLoader.execute();
-            model.fireTableDataChanged();
+            model.fireTableDataChanged(); 
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, "RefreshData: " + ex);
             ex.printStackTrace();
@@ -175,7 +195,7 @@ public class MainFrame extends JFrame {
         public void actionPerformed(ActionEvent e) {
             String actionCommand = e.getActionCommand();
             if (actionCommand.equals("add")) {
-                model.addRow(new Object[]{" ", " ", " "});
+                model.addEmptyRow();
                 model.fireTableDataChanged();
             } else if (actionCommand.equals("refresh")) {
                 refreshData();
@@ -186,7 +206,9 @@ public class MainFrame extends JFrame {
     }
 
     private class ProgressListener implements PropertyChangeListener {
+
         JProgressBar progressBar;
+
         ProgressListener(JProgressBar progressBar) {
             this.progressBar = progressBar;
             this.progressBar.setValue(0);
@@ -198,6 +220,8 @@ public class MainFrame extends JFrame {
                 this.progressBar.setIndeterminate(false);
                 int progress = (Integer) evt.getNewValue();
                 this.progressBar.setValue(progress);
+                refreshButton.setEnabled(progressBar.getPercentComplete() == 1.0);
+                objectSelectorBox.setEnabled(progressBar.getPercentComplete() == 1.0);
             }
         }
     }

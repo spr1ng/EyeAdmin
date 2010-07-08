@@ -2,11 +2,11 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package eye.admin;
+package eye.admin.table;
 
-import eye.models.Image;
-import eye.models.Place;
-import eye.models.RemoteSource;
+import eye.admin.MainFrame;
+import eye.core.model.Image;
+import eye.core.model.Place;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JTable;
@@ -14,6 +14,7 @@ import javax.swing.JTable;
 /**
  *
  * @author stream
+ * @version $Id: EyeCellRemoverListener.java 71 2010-07-08 03:50:40Z spr1ng $
  */
 public class EyeCellRemoverListener implements ActionListener {
 
@@ -35,7 +36,6 @@ public class EyeCellRemoverListener implements ActionListener {
             } else {
                 model.delete(new Place(remoteSourceUrl, null));
             }
-            model.commit();
             model.removeRow(rowIndex);
         } catch (ArrayIndexOutOfBoundsException aioobe) {
             //System.out.println("ArrayIndexOutOfBoundsException in eyeCellRemoverListener");

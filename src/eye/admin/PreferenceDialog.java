@@ -11,11 +11,12 @@
 
 package eye.admin;
 
-import db4oserver.ConfigLoader;
+import eye.server.ConfigLoader;
 
 /**
  *
  * @author stream
+ * @version $Id: PreferenceDialog.java 71 2010-07-08 03:50:40Z spr1ng $
  */
 public class PreferenceDialog extends javax.swing.JDialog {
     private ConfigLoader config = ConfigLoader.getInstance();

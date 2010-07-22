@@ -4,34 +4,24 @@
  */
 package eye.admin;
 
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.*;
+import javax.swing.table.TableColumn;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import org.jdesktop.swingx.JXTable;
+import org.jdesktop.swingx.decorator.ColorHighlighter;
+import org.jdesktop.swingx.decorator.HighlightPredicate;
+import org.jdesktop.swingx.decorator.HighlighterFactory;
+import org.jdesktop.swingx.decorator.PatternPredicate;
+
 import eye.admin.table.RemoteSourceLoader;
 import eye.admin.table.EyeTableModel;
 import eye.admin.table.EyeCellRenderer;
 import eye.admin.table.EyeCellRemover;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
-import javax.swing.JTextField;
-import javax.swing.JToolBar;
-import javax.swing.ListSelectionModel;
-import javax.swing.table.TableColumn;
-import org.jdesktop.swingx.JXTable;
-import org.jdesktop.swingx.decorator.HighlighterFactory;
+
 
 /**
  *
@@ -48,7 +38,7 @@ public class MainFrame extends JFrame {
     private ProgressListener progressListener = new ProgressListener(progressBar);
     private JLabel total;
     private JButton refreshButton;
-    private static String remoteSourceActClass;
+    private static String remoteSourceActClass = "Images";
 
     public MainFrame() {
         super("EyeAdmin");
@@ -109,21 +99,16 @@ public class MainFrame extends JFrame {
 
     private JToolBar toolBar() {
         JToolBar toolBar = new JToolBar();
-        JButton addButton = new JButton("New");
-        addButton.setActionCommand("add");
-//        JButton commitButton = new JButton("Commit");
-//        commitButton.setActionCommand("commit");
-        addButton.addActionListener(actListener);
-        //commitButton.addActionListener(actListener);
+        
         total = new JLabel();
-        Dimension dim =  new Dimension(120,30);
+        Dimension dim = new Dimension(240, 30);
         total.setMaximumSize(dim);
         total.setMinimumSize(dim);
         total.setPreferredSize(dim);
-        toolBar.add(addButton);
+        toolBar.add(toolButtons());
         objectSelectorBox = new JComboBox(new Object[]{"Images", "Places"});
         objectSelectorBox.addActionListener(new ObjectSelectorListener());
-        objectSelectorBox.setPreferredSize(new Dimension(300, 30));
+        objectSelectorBox.setPreferredSize(new Dimension(250, 30));
         toolBar.add(new JSeparator());
         toolBar.add(objectSelectorBox);
         toolBar.add(total);
@@ -131,19 +116,36 @@ public class MainFrame extends JFrame {
         return toolBar;
     }
 
+    private JPanel toolButtons(){
+        JPanel p = new JPanel();
+        JButton addButton = new JButton("New");
+        addButton.setActionCommand("add");
+        JButton commitButton = new JButton("Commit");
+        commitButton.setActionCommand("commit");
+        JButton cleanDataButton = new JButton("Clean");
+        cleanDataButton.setActionCommand("clean");
+        addButton.addActionListener(actListener);
+        commitButton.addActionListener(actListener);
+        cleanDataButton.addActionListener(actListener);
+        p.add(commitButton);
+        p.add(cleanDataButton);
+        p.add(addButton);
+        return p;
+    }
+
     private JPanel horizontalSpinner() {
         JPanel p = new JPanel();
         refreshButton = new JButton("↺");
         refreshButton.setActionCommand("refresh");
         refreshButton.addActionListener(actListener);
-        JButton pre = new JButton("<<");
+        /*JButton pre = new JButton("<<");
         JButton next = new JButton(">>");
         JTextField field = new JTextField(8);
-        field.setHorizontalAlignment(JTextField.CENTER);
+        field.setHorizontalAlignment(JTextField.CENTER);*/
         p.add(refreshButton);
-        p.add(pre);
+        /*p.add(pre);
         p.add(field);
-        p.add(next);
+        p.add(next);*/
         return p;
     }
 
@@ -160,7 +162,10 @@ public class MainFrame extends JFrame {
         table.setColumnControlVisible(true);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         table.setTerminateEditOnFocusLost(true);
-        table.setHighlighters(HighlighterFactory.createSimpleStriping(HighlighterFactory.NOTEPAD));
+        HighlightPredicate patternPredicate = new PatternPredicate(" $", 0);
+        ColorHighlighter hi = new ColorHighlighter(patternPredicate);
+        hi.setBackground(HighlighterFactory.CLASSIC_LINE_PRINTER);
+        table.setHighlighters(hi);
         table.setRolloverEnabled(true);
         return new JScrollPane(table);
     }
@@ -171,15 +176,14 @@ public class MainFrame extends JFrame {
         String item = (String) objectSelectorBox.getSelectedItem();
         remoteSourceActClass = item;
         progressBar.setValue(0);
-        model.clear();
+        model.clearTable();
         try {
             RemoteSourceLoader sourceLoader = new RemoteSourceLoader(model, total);
             sourceLoader.addPropertyChangeListener(progressListener);
             sourceLoader.execute();
-            model.fireTableDataChanged(); 
+            model.fireTableDataChanged();
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, "RefreshData: " + ex);
-            ex.printStackTrace();
         }
     }
 
@@ -196,11 +200,13 @@ public class MainFrame extends JFrame {
             String actionCommand = e.getActionCommand();
             if (actionCommand.equals("add")) {
                 model.addEmptyRow();
-                model.fireTableDataChanged();
             } else if (actionCommand.equals("refresh")) {
                 refreshData();
-            } else {
-                /*COMMIT STUB*/
+            } else if (actionCommand.equals("commit")){
+                model.commitNewData();
+            } else if (actionCommand.equals("clean")){
+                model.cleanDatabase();
+                total.setText("0");
             }
         }
     }
@@ -222,6 +228,9 @@ public class MainFrame extends JFrame {
                 this.progressBar.setValue(progress);
                 refreshButton.setEnabled(progressBar.getPercentComplete() == 1.0);
                 objectSelectorBox.setEnabled(progressBar.getPercentComplete() == 1.0);
+                if (progressBar.getValue() == progressBar.getMaximum()) {
+                    progressBar.setValue(0);
+                }
             }
         }
     }

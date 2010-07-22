@@ -18,14 +18,14 @@ import javax.swing.SwingWorker;
 /**
  *
  * @author stream
- * @version $Id: RemoteSourceLoader.java 71 2010-07-08 03:50:40Z spr1ng $
+ * @version $Id: RemoteSourceLoader.java 123 2010-07-21 06:30:59Z stream $
  */
 public class RemoteSourceLoader extends SwingWorker<Vector<Vector>, Vector> {
 
     private static DbManager dbm = DbManager.getManager();
     private EyeTableModel model;
-    private ObjectSet<RemoteSource> objectSet;
     private final JLabel total;
+    private static Vector titles;
 
     public RemoteSourceLoader(EyeTableModel model, JLabel total) {
         this.model = model;
@@ -39,19 +39,47 @@ public class RemoteSourceLoader extends SwingWorker<Vector<Vector>, Vector> {
         return remoteSourceRow;
     }
 
+    private Vector getColumnTitles() {
+        titles = new Vector();
+        titles.add("Idx");
+        titles.add("URL");
+        titles.add(" ");
+        return titles;
+    }
 
     protected Vector<Vector> retrieveRemoteSourceRow() {
         Query q = dbm.getContainer().query();
         q.constrain(getActiveRemoteSource().getClass());
-        objectSet = q.execute();
-        total.setText("Total: " + objectSet.size());
+        ObjectSet<RemoteSource> objectSet = q.execute();
+        int fulledImage = 0;
+        int checkedPlace = 0;
         Vector dataVector = new Vector();
+        if (objectSet.size() == 0) total.setText("0");
         for (int x = 0; x < objectSet.size(); x++) {
             Vector row = new Vector();
-            row.add(x+1);
-            row.add(objectSet.next().getUrl());
+            RemoteSource rs = objectSet.next();
+            if (MainFrame.getRemoteSourceClass().equals("Images")) {
+                if (((Image) rs).hasMetaData()) {
+                    fulledImage++;
+                    total.setText("<html><strong><font color='green'>&nbsp;" + fulledImage + "</font>" + "/" + objectSet.size() + "</strong></html>");
+                    row.add(x + 1 + " ");
+                } else {
+                    row.add(x + 1);
+                }
+            } else if (MainFrame.getRemoteSourceClass().equals("Places")) {
+                if (((Place)rs).getDate() != null){
+                    checkedPlace++;
+                    total.setText("<html><strong><font color='green'>&nbsp;" + checkedPlace + "</font>" + "/" + objectSet.size() + "</strong></html>");
+                    row.add(x + 1 + " ");
+                } else {
+                    row.add(x + 1);
+                }
+            }
+            row.add(rs.getUrl());
             row.add(" ");
-            dataVector.add(row);
+            //dataVector.add(row);
+            model.addRow(row);
+            model.fireTableDataChanged();
             setProgress(100 * (x + 1) / objectSet.size());
         }
         return dataVector;
@@ -67,10 +95,19 @@ public class RemoteSourceLoader extends SwingWorker<Vector<Vector>, Vector> {
                 model.addRow(row);
             }
         } catch (Exception ignore) {
-            System.out.println(ignore);
+            System.out.println("RemoteSourceLoader: done :" + ignore);
         }
     }
 
+    /*@Override
+    protected void process(List<Vector> rows) {
+    for (Vector row : rows) {
+    if (isCancelled()) {
+    break;
+    }
+    model.addRow(row);
+    }
+    }*/
     public RemoteSource getActiveRemoteSource() {
         String remoteSourceClassName = MainFrame.getRemoteSourceClass();
         if (remoteSourceClassName != null) {

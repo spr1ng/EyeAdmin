@@ -13,11 +13,10 @@ package eye.admin;
 
 import eye.server.manager.ConfigLoader;
 
-
 /**
  *
  * @author stream
- * @version $Id: PreferenceDialog.java 83 2010-07-09 00:51:11Z stream $
+ * @version $Id$
  */
 public class PreferenceDialog extends javax.swing.JDialog {
     private ConfigLoader config = ConfigLoader.getInstance();

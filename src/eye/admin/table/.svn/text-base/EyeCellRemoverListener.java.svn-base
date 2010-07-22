@@ -38,7 +38,6 @@ public class EyeCellRemoverListener implements ActionListener {
             }
             model.removeRow(rowIndex);
         } catch (ArrayIndexOutOfBoundsException aioobe) {
-            //System.out.println("ArrayIndexOutOfBoundsException in eyeCellRemoverListener");
         }
         model.fireTableDataChanged();
     }

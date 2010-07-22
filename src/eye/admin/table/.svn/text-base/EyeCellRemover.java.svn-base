@@ -6,7 +6,6 @@ package eye.admin.table;
 
 import eye.admin.MainFrame;
 import java.awt.Component;
-import java.util.Date;
 import javax.swing.AbstractCellEditor;
 import javax.swing.JButton;
 import javax.swing.JTable;

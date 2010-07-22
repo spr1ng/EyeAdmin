@@ -7,14 +7,14 @@ package eye.admin;
 import com.db4o.ObjectContainer;
 import com.db4o.cs.Db4oClientServer;
 import eye.server.manager.AbstractDBManager;
-import eye.server.ConfigLoader;
+import eye.server.manager.ConfigLoader;
 import java.util.List;
 import javax.swing.JOptionPane;
 
 /**
  *
  * @author stream
- * @version $Id: DbManager.java 71 2010-07-08 03:50:40Z spr1ng $
+ * @version $Id: DbManager.java 83 2010-07-09 00:51:11Z stream $
  */
 public class DbManager extends AbstractDBManager {
 

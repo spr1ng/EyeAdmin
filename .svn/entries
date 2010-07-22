@@ -1,15 +1,15 @@
 10
 
 dir
-71
+123
 svn://localhost/spr1ngsvn/TheEye/EyeAdmin
 svn://localhost/spr1ngsvn/TheEye
 
 
 
-2010-07-08T03:50:40.668573Z
-71
-spr1ng
+2010-07-21T06:30:59.616891Z
+123
+stream
 has-props
 
 
@@ -31,7 +31,7 @@ dir
 
 conf.properties
 file
-55
+
 
 
 
@@ -52,7 +52,7 @@ dir
 
 manifest.mf
 file
-55
+
 
 
 
@@ -120,7 +120,7 @@ spr1ng
 
 build.xml
 file
-55
+
 
 
 

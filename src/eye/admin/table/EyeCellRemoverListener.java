@@ -14,7 +14,7 @@ import javax.swing.JTable;
 /**
  *
  * @author stream
- * @version $Id: EyeCellRemoverListener.java 71 2010-07-08 03:50:40Z spr1ng $
+ * @version $Id: EyeCellRemoverListener.java 84 2010-07-09 02:15:22Z stream $
  */
 public class EyeCellRemoverListener implements ActionListener {
 
@@ -38,7 +38,6 @@ public class EyeCellRemoverListener implements ActionListener {
             }
             model.removeRow(rowIndex);
         } catch (ArrayIndexOutOfBoundsException aioobe) {
-            //System.out.println("ArrayIndexOutOfBoundsException in eyeCellRemoverListener");
         }
         model.fireTableDataChanged();
     }

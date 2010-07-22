@@ -1,15 +1,15 @@
 10
 
 dir
-55
+123
 svn://localhost/spr1ngsvn/TheEye/EyeAdmin/nbproject
 svn://localhost/spr1ngsvn/TheEye
 
 
 
-2010-07-02T02:28:09.888129Z
-36
-stream
+2010-07-08T03:50:40.668573Z
+71
+spr1ng
 has-props
 
 
@@ -28,7 +28,7 @@ has-props
 
 project.properties
 file
-71
+
 
 
 
@@ -62,7 +62,7 @@ spr1ng
 
 project.xml
 file
-71
+
 
 
 
